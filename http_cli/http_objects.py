@@ -1,4 +1,3 @@
-import json
 from typing import Literal, Self
 
 from http_cli.http_abc import HttpAbc
@@ -13,27 +12,36 @@ class Validator:
             raise TypeError(f"dict expected for headers, got {type(headers)}")
         if body and not isinstance(body, str):
             raise TypeError(f"str expected for body, got {type(body)}")
-        
+
         for k, v in headers.items():
             if not isinstance(k, str) or not isinstance(v, str):
-                raise ValueError("dict[str, str] expected for headers, got other types of keys or values")
+                raise ValueError(
+                    "dict[str, str] expected for headers, got other types of keys or values"
+                )
 
         self.headers = headers
         self.body = body
 
 
 class HttpRequest(HttpAbc, Validator):
-    method: Literal["GET", "POST"] # только POST требуется в задаче, поэтому не весь список
+    method: Literal[
+        "GET", "POST"
+    ]  # только POST требуется в задаче, поэтому не весь список
     path: str
 
-    __slots__ = ('method', 'path', 'headers', 'body')
+    __slots__ = ("method", "path", "headers", "body")
 
-    def __init__(self, method: Literal["GET", "POST"], 
-                 path: str, headers: dict[str, str], body: str | None):
+    def __init__(
+        self,
+        method: Literal["GET", "POST"],
+        path: str,
+        headers: dict[str, str],
+        body: str | None,
+    ):
         # без проверки для метода, поскольку подсказка в виде литерала
         if not isinstance(path, str):
             raise TypeError(f"str expected for path, got {type(path)}")
-        
+
         super().__init__(headers, body)
 
         if "Host" not in headers.keys():
@@ -41,10 +49,10 @@ class HttpRequest(HttpAbc, Validator):
 
         if body and "Content-Length" not in headers.keys():
             headers.update({"Content-Length": str(len(body))})
-        
+
         self.method = method
         self.path = path
-        
+
     def __str__(self):
         headers = "\r\n".join([f"{k}: {v}" for k, v in self.headers.items()])
         request_str = (
@@ -55,11 +63,11 @@ class HttpRequest(HttpAbc, Validator):
         return request_str
 
     def to_bytes(self) -> bytes:
-        return str(self).encode('utf-8')
+        return str(self).encode("utf-8")
 
     @classmethod
     def from_bytes(cls, binary_data: bytes) -> Self:
-        request_str = binary_data.decode('utf-8')
+        request_str = binary_data.decode("utf-8")
         parts = request_str.split("\r\n\r\n", 1)
         header_part = parts[0]
         body = parts[1] if len(parts) > 1 else None
@@ -76,14 +84,15 @@ class HttpRequest(HttpAbc, Validator):
 
         return cls(method, path, headers, body)
 
+
 class HttpResponse(HttpAbc, Validator):
     status_code: int
 
-    __slots__ = ('status_code', 'headers', 'body')
+    __slots__ = ("status_code", "headers", "body")
 
     def __init__(self, status_code: int, headers: dict[str, str], body: str | None):
         if not isinstance(status_code, int):
-            raise TypeError(f'int expected for status_code, got {type(status_code)}')
+            raise TypeError(f"int expected for status_code, got {type(status_code)}")
 
         super().__init__(headers, body)
 
@@ -92,15 +101,11 @@ class HttpResponse(HttpAbc, Validator):
     def __str__(self):
         status_line = f"HTTP/1.1 {self.status_code}\r\n"
         headers = "\r\n".join([f"{k}: {v}" for k, v in self.headers.items()])
-        response_str = (
-            f"{status_line}"
-            f"{headers}\r\n\r\n"
-            f"{self.body}"
-        )
+        response_str = f"{status_line}" f"{headers}\r\n\r\n" f"{self.body}"
         return response_str
 
     def to_bytes(self) -> bytes:
-        return str(self).encode('utf-8')
+        return str(self).encode("utf-8")
 
     @classmethod
     def from_bytes(cls, binary_data: bytes) -> Self:

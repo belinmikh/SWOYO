@@ -1,6 +1,6 @@
 from typing import Literal, Self
 
-from http_cli.http_abc import HttpAbc
+from http_cli.http_abc import AbstractHttp
 
 
 class Validator:
@@ -23,7 +23,7 @@ class Validator:
         self.body = body
 
 
-class HttpRequest(HttpAbc, Validator):
+class HttpRequest(AbstractHttp, Validator):
     method: Literal[
         "GET", "POST"
     ]  # только POST требуется в задаче, поэтому не весь список
@@ -85,7 +85,7 @@ class HttpRequest(HttpAbc, Validator):
         return cls(method, path, headers, body)
 
 
-class HttpResponse(HttpAbc, Validator):
+class HttpResponse(AbstractHttp, Validator):
     status_code: int
 
     __slots__ = ("status_code", "headers", "body")

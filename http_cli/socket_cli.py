@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 import socket
 from typing import Literal
 
@@ -33,11 +34,19 @@ class SocketClient:
 
         rq = HttpRequest(method, path, headers, body)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((self.host, self.port))
-            s.sendall(rq.to_bytes())
+            logging.debug(f'{self.host}:{self.port} | connecting...')
+            try:
+                s.connect((self.host, self.port))
+                logging.debug(f'{self.host}:{self.port} | sending data...')
+                s.sendall(rq.to_bytes())
 
-            response = s.recv(4096)
-            return HttpResponse.from_bytes(response)
+                response = HttpResponse.from_bytes(s.recv(4096))
+                logging.debug(f'{self.host}:{self.port}'
+                              f' | connection closed: {response.status_code}')
+                return response
+            except Exception as e:
+                logging.error(f'{self.host}:{self.port} | FAIL: {e}')
+                raise e
 
     def post(
         self, path: str, headers: dict[str, str], body: str | None

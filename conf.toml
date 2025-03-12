@@ -1,0 +1,4 @@
+service = 'localhost:4010'
+username = 'username'
+password = 'password'
+debug = 'false'

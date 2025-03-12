@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Self
 
 
-class HttpAbc(ABC):
+class AbstractHttp(ABC):
     @abstractmethod
     def to_bytes(self) -> bytes:
         pass

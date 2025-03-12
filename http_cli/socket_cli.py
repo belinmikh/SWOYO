@@ -34,18 +34,20 @@ class SocketClient:
 
         rq = HttpRequest(method, path, headers, body)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            logging.debug(f'{self.host}:{self.port} | connecting...')
+            logging.debug(f"{self.host}:{self.port} | connecting...")
             try:
                 s.connect((self.host, self.port))
-                logging.debug(f'{self.host}:{self.port} | sending data...')
+                logging.debug(f"{self.host}:{self.port} | sending data...")
                 s.sendall(rq.to_bytes())
 
                 response = HttpResponse.from_bytes(s.recv(4096))
-                logging.debug(f'{self.host}:{self.port}'
-                              f' | connection closed: {response.status_code}')
+                logging.debug(
+                    f"{self.host}:{self.port}"
+                    f" | connection closed: {response.status_code}"
+                )
                 return response
             except Exception as e:
-                logging.error(f'{self.host}:{self.port} | FAIL: {e}')
+                logging.error(f"{self.host}:{self.port} | FAIL: {e}")
                 raise e
 
     def post(

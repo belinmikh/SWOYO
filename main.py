@@ -2,7 +2,7 @@ import logging
 import sys
 import tomllib
 
-from http_cli.socket_cli import SocketSmsClient
+from src.clients import SocketSmsClient
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:

@@ -1,6 +1,6 @@
 from typing import Literal, Self
 
-from http_cli.http_abc import AbstractHttp
+from src.http_abc import AbstractHttp
 
 
 class Validator:
@@ -99,7 +99,13 @@ class HttpResponse(AbstractHttp, Validator):
         self.status_code = status_code
 
     def __str__(self):
-        status_line = f"HTTP/1.1 {self.status_code}\r\n"
+        status_dict = {
+            200: " OK",
+            400: " Bad Request",
+            401: " Unauthorized",
+            500: " Internal Server Error"
+        }
+        status_line = f"HTTP/1.1 {self.status_code}{status_dict.get(self.status_code)}\r\n"
         headers = "\r\n".join([f"{k}: {v}" for k, v in self.headers.items()])
         response_str = f"{status_line}" f"{headers}\r\n\r\n" f"{self.body}"
         return response_str

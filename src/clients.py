@@ -4,7 +4,7 @@ import logging
 import socket
 from typing import Literal
 
-from http_cli.http_objects import HttpRequest, HttpResponse
+from src.http_entities import HttpRequest, HttpResponse
 
 
 class SocketClient:

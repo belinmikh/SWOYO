@@ -25,8 +25,16 @@ class SocketClient:
         method: Literal["GET", "POST"],
         path: str,
         headers: dict[str, str],
-        body: str | None,
+        body: str | None = None,
     ) -> HttpResponse:
+        """
+        Sends http request via socket
+        :param method: http method, str
+        :param path: internal url, str
+        :param headers: headers, dict
+        :param body: body, str
+        :return: HttpResponse object
+        """
         if not isinstance(headers, dict):
             raise TypeError(f"dict expected for headers, got {type(headers)}")
 
@@ -53,6 +61,13 @@ class SocketClient:
     def post(
         self, path: str, headers: dict[str, str], body: str | None
     ) -> HttpResponse:
+        """
+        Sends http post request via socket
+        :param path: internal url, str
+        :param headers: headers, dict
+        :param body: body, str
+        :return: HttpResponse object
+        """
         return self.request("POST", path, headers, body)
 
 
@@ -76,15 +91,30 @@ class BasicAuthSocketClient(SocketClient):
         method: Literal["GET", "POST"],
         path: str,
         headers: dict[str, str],
-        body: str | None,
+        body: str | None = None,
     ) -> HttpResponse:
+        """
+        Sends http request via socket with Authorization header for BasicAuth
+        :param method: http method, str
+        :param path: internal url, str
+        :param headers: headers, dict
+        :param body: body, str
+        :return: HttpResponse object
+        """
         if not isinstance(headers, dict):
             raise TypeError(f"dict expected for headers, got {type(headers)}")
 
         headers.update({"Authorization": f"Basic {self.__auth_header}"})
         return super().request(method, path, headers, body)
 
-    def post(self, path: str, headers: dict[str, str], body: str | None):
+    def post(self, path: str, headers: dict[str, str], body: str | None) -> HttpResponse:
+        """
+        Sends http post request via socket with Authorization header for BasicAuth
+        :param path: internal url, str
+        :param headers: headers, dict
+        :param body: body, str
+        :return: HttpResponse object
+        """
         return self.request("POST", path, headers, body)
 
 
@@ -93,6 +123,13 @@ class SocketSmsClient(BasicAuthSocketClient):
         super().__init__(host, port, username, password)
 
     def send_sms(self, sender: str, recipient: str, message: str) -> HttpResponse:
+        """
+        Sends http post request for sending sms
+        :param sender: sender phone number, str
+        :param recipient: recipient phone number, str
+        :param message: message text, str
+        :return: HttpResponse object
+        """
         if not isinstance(sender, str):
             raise TypeError(f"str expected for sender, got {type(sender)}")
         if not isinstance(recipient, str):

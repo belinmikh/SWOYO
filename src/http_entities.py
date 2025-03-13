@@ -63,10 +63,19 @@ class HttpRequest(AbstractHttp, Validator):
         return request_str
 
     def to_bytes(self) -> bytes:
+        """
+        Transforms HttpRequest objects to bytes
+        :return: raw bytes request
+        """
         return str(self).encode("utf-8")
 
     @classmethod
     def from_bytes(cls, binary_data: bytes) -> Self:
+        """
+        Transforms bytes to HttpRequest object
+        :param binary_data: raw request, bytes
+        :return: HttpRequest object
+        """
         request_str = binary_data.decode("utf-8")
         parts = request_str.split("\r\n\r\n", 1)
         header_part = parts[0]
@@ -111,10 +120,19 @@ class HttpResponse(AbstractHttp, Validator):
         return response_str
 
     def to_bytes(self) -> bytes:
+        """
+        Transforms HttpResponse objects to bytes
+        :return: raw bytes response
+        """
         return str(self).encode("utf-8")
 
     @classmethod
     def from_bytes(cls, binary_data: bytes) -> Self:
+        """
+        Transforms bytes to HttpResponse object
+        :param binary_data: raw response, bytes
+        :return: HttpResponse object
+        """
         response_str = binary_data.decode("utf-8")
         parts = response_str.split("\r\n\r\n", 1)
         header_part = parts[0]

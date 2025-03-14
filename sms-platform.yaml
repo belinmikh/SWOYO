@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: SMS Platfrom API
+  version: 1.0.0
+  description: Спецификация API для платформы отправки СМС-сообщений.
+servers:
+  - url: "http://localhost:4010"
+    description: Основной сервер
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+security:
+  - basicAuth: []
+paths:
+  /send_sms:
+    post:
+      tags: [Отправка сообщения]
+      summary: Отправка СМС
+      description: Получает данные СМС-сообщения и передаёт их в агрегатор.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sender:
+                  type: string
+                  description: Номер отправителя
+                recipient:
+                  type: string
+                  description: Номер получателя
+                message:
+                  type: string
+                  description: Текст сообщения
+              required:
+                - sender
+                - recipient
+                - message
+      responses:
+        "200":
+          description: Сообщение успешно отправлено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message_id:
+                    type: string
+                    example: "123456"
+        "400":
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid parameters"
+        "401":
+          description: Отсутствует Authorization заголовок
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid credentials"
+        "500":
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"

@@ -17,8 +17,12 @@ if __name__ == "__main__":
         with open("conf.toml", "rb") as toml:
             toml_dict = tomllib.load(toml)
 
-        host, port = toml_dict["service"].split(":")
-        port = int(port)
+        if ":" in toml_dict["service"]:
+            host, port = toml_dict["service"].split(":")
+            port = int(port)
+        else:
+            host = toml_dict["service"]
+            port = 80
 
         username = toml_dict["username"]
         password = toml_dict["password"]
